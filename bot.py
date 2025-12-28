@@ -103,7 +103,7 @@ def get_daily_message():
 @tasks.loop(
     time=[
         datetime.time(hour=16, minute=40, tzinfo=datetime.timezone(datetime.timedelta(hours=5))),
-        datetime.time(hour=22, minute=01, tzinfo=datetime.timezone(datetime.timedelta(hours=5))),
+        datetime.time(hour=22, minute=0, tzinfo=datetime.timezone(datetime.timedelta(hours=5))),
     ]
 )
 
@@ -118,5 +118,6 @@ async def daily_dm():
             print(f"Failed to DM {uid}: {e}")
 
 bot.run(TOKEN)
+
 
 
