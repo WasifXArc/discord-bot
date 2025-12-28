@@ -1,6 +1,7 @@
 import discord
 from discord.ext import tasks, commands
 import datetime
+import random
 
 import os
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -101,7 +102,7 @@ def get_daily_message():
 
 @tasks.loop(
     time=[
-        datetime.time(hour=16, minute=30, tzinfo=datetime.timezone(datetime.timedelta(hours=5))),
+        datetime.time(hour=16, minute=40, tzinfo=datetime.timezone(datetime.timedelta(hours=5))),
         datetime.time(hour=22, minute=30, tzinfo=datetime.timezone(datetime.timedelta(hours=5))),
     ]
 )
@@ -117,3 +118,4 @@ async def daily_dm():
             print(f"Failed to DM {uid}: {e}")
 
 bot.run(TOKEN)
+
