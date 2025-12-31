@@ -2,16 +2,20 @@ import discord
 from discord.ext import tasks, commands
 import datetime
 import random
-
 import os
-TOKEN = os.getenv("DISCORD_TOKEN")
 
+# ================= CONFIG =================
+
+TOKEN = os.getenv("DISCORD_TOKEN")
 
 USER_IDS = [
     1069095155275153459,
     1346102480785768620,
     954962586141597779,
 ]
+
+# Change this to the day AFTER your last rest day
+START_DATE = datetime.date(2025, 12, 29)
 
 MESSAGES = [
     "Get today’s workout in.",
@@ -77,37 +81,54 @@ MESSAGES = [
     "Keep the chain unbroken.",
 ]
 
+REST_MESSAGES = [
+    "Rest today. You’ve earned it.",
+    "No workout today. Recover well.",
+    "Today is for rest and recovery.",
+    "You’ve worked hard. Take today off.",
+    "Rest day. Come back stronger tomorrow.",
+]
 
 used_messages = []
+
+# ================= BOT SETUP =================
 
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-@bot.event
-async def on_ready():
-    daily_dm.start()
-    print("bot online")
+# ================= HELPERS =================
+
+def get_day_number():
+    today = datetime.date.today()
+    return (today - START_DATE).days + 1
 
 def get_daily_message():
     global used_messages
 
     if len(used_messages) == len(MESSAGES):
-        used_messages = []  # reset once all messages are used
+        used_messages = []
 
     remaining = [m for m in MESSAGES if m not in used_messages]
     message = random.choice(remaining)
     used_messages.append(message)
-
     return message
 
+# ================= TASKS =================
+
+# Workout messages (twice daily)
 @tasks.loop(
     time=[
         datetime.time(hour=16, minute=40, tzinfo=datetime.timezone(datetime.timedelta(hours=5))),
-        datetime.time(hour=22, minute=0, tzinfo=datetime.timezone(datetime.timedelta(hours=5))),
+        datetime.time(hour=22, minute=30, tzinfo=datetime.timezone(datetime.timedelta(hours=5))),
     ]
 )
-
 async def daily_dm():
+    day = get_day_number()
+
+    # Skip rest day
+    if day % 7 == 0:
+        return
+
     message = get_daily_message()
 
     for uid in USER_IDS:
@@ -117,7 +138,37 @@ async def daily_dm():
         except Exception as e:
             print(f"Failed to DM {uid}: {e}")
 
+# Rest day message (ONCE at 4:00 PM)
+@tasks.loop(
+    time=datetime.time(
+        hour=18,
+        minute=39,
+        tzinfo=datetime.timezone(datetime.timedelta(hours=5))
+    )
+)
+async def rest_day_dm():
+    day = get_day_number()
+
+    if day % 7 != 0:
+        return
+
+    message = random.choice(REST_MESSAGES)
+
+    for uid in USER_IDS:
+        try:
+            user = await bot.fetch_user(uid)
+            await user.send(message)
+        except Exception as e:
+            print(f"Failed to DM {uid}: {e}")
+
+# ================= EVENTS =================
+
+@bot.event
+async def on_ready():
+    daily_dm.start()
+    rest_day_dm.start()
+    print("bot online")
+
+# ================= RUN =================
+
 bot.run(TOKEN)
-
-
-
