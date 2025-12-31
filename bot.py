@@ -16,11 +16,13 @@ USER_IDS = [
 
 PK_TZ = datetime.timezone(datetime.timedelta(hours=5))
 
-# TODAY is a rest day
+# TODAY is rest day
 LAST_REST_DATE = datetime.date(2025, 12, 28)
 
-REST_HOUR = 19  # 4 PM
-REST_MINUTE = 50
+REST_HOUR = now.hour
+REST_MINUTE = now.minute + 3
+
+WORKOUT_TIMES = [(16, 30), (22, 30)]
 
 MESSAGES = [
     "Get today’s workout in.",
@@ -33,16 +35,6 @@ MESSAGES = [
     "No pressure. Just train.",
     "Do today’s workout and move on.",
     "Do what you planned today.",
-    "Move your body today.",
-    "Today is for training.",
-    "Just complete the session.",
-    "Do the minimum, but do it.",
-    "Train, then continue your day.",
-    "Get the session done today.",
-    "No excuses. Just movement.",
-    "Keep the habit alive today.",
-    "Stay consistent today.",
-    "One session keeps momentum.",
 ]
 
 REST_MESSAGES = [
@@ -55,6 +47,7 @@ REST_MESSAGES = [
 
 used_messages = []
 last_rest_sent_on = None
+last_workout_sent = set()
 
 # ================= BOT =================
 
@@ -64,72 +57,71 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 # ================= HELPERS =================
 
 def is_rest_day(today):
-    days_since_rest = (today - LAST_REST_DATE).days
-    return days_since_rest % 7 == 0
+    return (today - LAST_REST_DATE).days % 8 == 0
 
 def get_daily_message():
     global used_messages
-
     if len(used_messages) == len(MESSAGES):
         used_messages = []
-
-    remaining = [m for m in MESSAGES if m not in used_messages]
-    msg = random.choice(remaining)
+    msg = random.choice([m for m in MESSAGES if m not in used_messages])
     used_messages.append(msg)
     return msg
 
-# ================= TASKS =================
+# ================= TASK =================
 
-@tasks.loop(minutes=1)
+@tasks.loop(seconds=30)
 async def scheduler():
     global last_rest_sent_on
 
     now = datetime.datetime.now(PK_TZ)
     today = now.date()
 
-    # ---- REST DAY LOGIC ----
+    # ---------- REST DAY ----------
     if is_rest_day(today):
         if (
             now.hour == REST_HOUR
-            and now.minute == REST_MINUTE
+            and REST_MINUTE <= now.minute <= REST_MINUTE + 1
             and last_rest_sent_on != today
         ):
-            message = random.choice(REST_MESSAGES)
-
+            msg = random.choice(REST_MESSAGES)
             for uid in USER_IDS:
                 try:
                     user = await bot.fetch_user(uid)
-                    await user.send(message)
+                    await user.send(msg)
                 except Exception as e:
-                    print(f"Failed to DM {uid}: {e}")
+                    print(f"DM failed {uid}: {e}")
 
             last_rest_sent_on = today
-            print("Rest message sent")
+            print("✅ Rest message sent")
 
-        return  # skip workouts on rest day
+        return
 
-    # ---- WORKOUT LOGIC ----
-    if now.hour in (16, 22) and now.minute == 30:
-        message = get_daily_message()
+    # ---------- WORKOUT DAY ----------
+    for hour, minute in WORKOUT_TIMES:
+        key = (today, hour, minute)
+        if (
+            now.hour == hour
+            and minute <= now.minute <= minute + 1
+            and key not in last_workout_sent
+        ):
+            msg = get_daily_message()
+            for uid in USER_IDS:
+                try:
+                    user = await bot.fetch_user(uid)
+                    await user.send(msg)
+                except Exception as e:
+                    print(f"DM failed {uid}: {e}")
 
-        for uid in USER_IDS:
-            try:
-                user = await bot.fetch_user(uid)
-                await user.send(message)
-            except Exception as e:
-                print(f"Failed to DM {uid}: {e}")
-
+            last_workout_sent.add(key)
+            print(f"✅ Workout message sent at {hour}:{minute}")
 
 # ================= EVENTS =================
 
 @bot.event
 async def on_ready():
     scheduler.start()
-    print("bot online")
+    print("🤖 bot online")
 
 # ================= RUN =================
 
 bot.run(TOKEN)
-
-
-
