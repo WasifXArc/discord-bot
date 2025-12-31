@@ -19,8 +19,8 @@ PK_TZ = datetime.timezone(datetime.timedelta(hours=5))
 # TODAY is a rest day
 LAST_REST_DATE = datetime.date(2025, 12, 28)
 
-REST_HOUR = 18  # 4 PM
-REST_MINUTE = 53
+REST_HOUR = 19  # 4 PM
+REST_MINUTE = 50
 
 MESSAGES = [
     "Get today’s workout in.",
@@ -130,5 +130,6 @@ async def on_ready():
 # ================= RUN =================
 
 bot.run(TOKEN)
+
 
 
