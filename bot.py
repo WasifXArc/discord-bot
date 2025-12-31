@@ -88,11 +88,11 @@ async def scheduler():
     today = now.date()
 
     # ---- REST DAY LOGIC ----
-    if is_rest_day(today):
-        if (
-            now.hour >= REST_HOUR
-            and (last_rest_sent_on != today)
-        ):
+    if (
+    now.hour == REST_HOUR
+    and now.minute == REST_MINUTE
+    and last_rest_sent_on != today
+):
             message = random.choice(REST_MESSAGES)
 
             for uid in USER_IDS:
@@ -128,3 +128,4 @@ async def on_ready():
 # ================= RUN =================
 
 bot.run(TOKEN)
+
