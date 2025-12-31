@@ -140,7 +140,7 @@ async def workout_dm():
 
 # Rest message (ONCE at 4:00 PM)
 @tasks.loop(
-    time=datetime.time(hour=18, minute=45, tzinfo=PK_TZ)
+    time=datetime.time(hour=18, minute=47, tzinfo=PK_TZ)
 )
 async def rest_dm():
     if not is_rest_day():
@@ -166,3 +166,4 @@ async def on_ready():
 # ================= RUN =================
 
 bot.run(TOKEN)
+
