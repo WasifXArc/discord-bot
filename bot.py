@@ -19,8 +19,8 @@ PK_TZ = datetime.timezone(datetime.timedelta(hours=5))
 # TODAY is rest day
 LAST_REST_DATE = datetime.date(2025, 12, 28)
 
-REST_HOUR = now.hour
-REST_MINUTE = now.minute + 3
+REST_HOUR = 20
+REST_MINUTE = 12
 
 WORKOUT_TIMES = [(16, 30), (22, 30)]
 
@@ -125,3 +125,4 @@ async def on_ready():
 # ================= RUN =================
 
 bot.run(TOKEN)
+
