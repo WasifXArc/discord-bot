@@ -14,8 +14,11 @@ USER_IDS = [
     954962586141597779,
 ]
 
-# Change this to the day AFTER your last rest day
-START_DATE = datetime.date(2025, 12, 29)
+# TODAY is a rest day
+# Bot will count 7 workout days starting TOMORROW
+LAST_REST_DATE = datetime.date(2025, 12, 28)  # set to TODAY
+
+PK_TZ = datetime.timezone(datetime.timedelta(hours=5))
 
 MESSAGES = [
     "Get today’s workout in.",
@@ -64,7 +67,6 @@ MESSAGES = [
     "Train without drama.",
     "Do today’s reps.",
     "Keep it simple today.",
-    "Today is not a rest day.",
     "Put the work in today.",
     "Just be consistent.",
     "Do the basics today.",
@@ -91,16 +93,17 @@ REST_MESSAGES = [
 
 used_messages = []
 
-# ================= BOT SETUP =================
+# ================= BOT =================
 
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 # ================= HELPERS =================
 
-def get_day_number():
+def is_rest_day():
     today = datetime.date.today()
-    return (today - START_DATE).days + 1
+    days_since_rest = (today - LAST_REST_DATE).days
+    return days_since_rest % 7 == 0
 
 def get_daily_message():
     global used_messages
@@ -109,25 +112,22 @@ def get_daily_message():
         used_messages = []
 
     remaining = [m for m in MESSAGES if m not in used_messages]
-    message = random.choice(remaining)
-    used_messages.append(message)
-    return message
+    msg = random.choice(remaining)
+    used_messages.append(msg)
+    return msg
 
 # ================= TASKS =================
 
-# Workout messages (twice daily)
+# Workout messages (TWICE per day)
 @tasks.loop(
     time=[
-        datetime.time(hour=16, minute=40, tzinfo=datetime.timezone(datetime.timedelta(hours=5))),
-        datetime.time(hour=22, minute=30, tzinfo=datetime.timezone(datetime.timedelta(hours=5))),
+        datetime.time(hour=16, minute=40, tzinfo=PK_TZ),
+        datetime.time(hour=22, minute=30, tzinfo=PK_TZ),
     ]
 )
-async def daily_dm():
-    day = get_day_number()
-
-    # Skip rest day
-    if day % 7 == 0:
-        return
+async def workout_dm():
+    if is_rest_day():
+        return  # skip workouts on rest day
 
     message = get_daily_message()
 
@@ -138,18 +138,12 @@ async def daily_dm():
         except Exception as e:
             print(f"Failed to DM {uid}: {e}")
 
-# Rest day message (ONCE at 4:00 PM)
+# Rest message (ONCE at 4:00 PM)
 @tasks.loop(
-    time=datetime.time(
-        hour=18,
-        minute=39,
-        tzinfo=datetime.timezone(datetime.timedelta(hours=5))
-    )
+    time=datetime.time(hour=18, minute=45, tzinfo=PK_TZ)
 )
-async def rest_day_dm():
-    day = get_day_number()
-
-    if day % 7 != 0:
+async def rest_dm():
+    if not is_rest_day():
         return
 
     message = random.choice(REST_MESSAGES)
@@ -165,8 +159,8 @@ async def rest_day_dm():
 
 @bot.event
 async def on_ready():
-    daily_dm.start()
-    rest_day_dm.start()
+    workout_dm.start()
+    rest_dm.start()
     print("bot online")
 
 # ================= RUN =================
