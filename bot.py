@@ -88,11 +88,12 @@ async def scheduler():
     today = now.date()
 
     # ---- REST DAY LOGIC ----
-    if (
-    now.hour == REST_HOUR
-    and now.minute == REST_MINUTE
-    and last_rest_sent_on != today
-):
+    if is_rest_day(today):
+        if (
+            now.hour == REST_HOUR
+            and now.minute == REST_MINUTE
+            and last_rest_sent_on != today
+        ):
             message = random.choice(REST_MESSAGES)
 
             for uid in USER_IDS:
@@ -118,6 +119,7 @@ async def scheduler():
             except Exception as e:
                 print(f"Failed to DM {uid}: {e}")
 
+
 # ================= EVENTS =================
 
 @bot.event
@@ -128,4 +130,5 @@ async def on_ready():
 # ================= RUN =================
 
 bot.run(TOKEN)
+
 
