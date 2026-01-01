@@ -16,8 +16,9 @@ USER_IDS = [
 
 PK_TZ = datetime.timezone(datetime.timedelta(hours=5))
 
-# Program start date (Dec 24, 2025)
-PROGRAM_START = datetime.date(2025, 12, 24)
+# Program start date - calculated so Dec 31, 2025 is Day 7 (first rest day)
+# Dec 31 is Day 7, so Day 1 was Dec 25, 2025
+PROGRAM_START = datetime.date(2025, 12, 25)
 
 REST_HOUR = 16  # 4 PM
 REST_MINUTE = 0
@@ -109,10 +110,12 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 
 def get_program_day(today):
     """Calculate which day of the program we're on"""
-    days_since_start = (today - PROGRAM_START).days + 1
-    if days_since_start < 1:
+    # Day 1 = Dec 24, Day 2 = Dec 25, etc.
+    days_since_start = (today - PROGRAM_START).days
+    # If before start date, treat as day 1
+    if days_since_start < 0:
         return 1
-    return days_since_start
+    return days_since_start + 1
 
 def is_rest_day(today):
     """Every 7th day is a rest day (7, 14, 21, 28, etc.)"""
