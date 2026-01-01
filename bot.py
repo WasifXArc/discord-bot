@@ -7,13 +7,14 @@ import os
 TOKEN = os.getenv("DISCORD_TOKEN")
 
 USER_IDS = [
-    1346102480785768620
+    1346102480785768620,
+    954962586141597779,
 ]
 
 PK_TZ = datetime.timezone(datetime.timedelta(hours=5))
 
-SEND_HOUR = 16     # ← change time here
-SEND_MINUTE = 30  # ← change time here
+SEND_HOUR = 23     # ← change time here
+SEND_MINUTE = 47  # ← change time here
 
 MESSAGE = "Do Todays' Workout Dumbass, One Rest Day Wasn't Enough??"
 
@@ -54,3 +55,4 @@ async def on_ready():
 
 # ========== RUN ==========
 bot.run(TOKEN)
+
