@@ -23,8 +23,8 @@ PROGRAM_START = datetime.date(2025, 12, 25)
 REST_HOUR = 16  # 4 PM
 REST_MINUTE = 0
 
-WORKOUT_HOURS = [16, 22]  # 4 PM and 10 PM
-WORKOUT_MINUTE = 30
+WORKOUT_HOURS = [16, 21]  # 4 PM and 10 PM
+WORKOUT_MINUTE = 36
 
 MESSAGES = [
     "Get today’s workout in.",
@@ -203,3 +203,4 @@ async def on_ready():
 # ================= RUN =================
 
 bot.run(TOKEN)
+
