@@ -24,7 +24,7 @@ REST_HOUR = 16  # 4 PM
 REST_MINUTE = 0
 
 WORKOUT_HOURS = [16, 21]  # 4 PM and 10 PM
-WORKOUT_MINUTE = 36
+WORKOUT_MINUTE = 38
 
 MESSAGES = [
     "Get today’s workout in.",
@@ -203,4 +203,5 @@ async def on_ready():
 # ================= RUN =================
 
 bot.run(TOKEN)
+
 
