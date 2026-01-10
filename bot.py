@@ -118,9 +118,9 @@ def get_program_day(today):
     return days_since_start + 1
 
 def is_rest_day(today):
-    """Every 7th day is a rest day (7, 14, 21, 28, etc.)"""
+    """Every 8th day is a rest day (8, 16, 24, 32, etc.)"""
     day_num = get_program_day(today)
-    return day_num % 7 == 0
+    return day_num % 8 == 0
 
 def get_daily_message():
     global used_messages
@@ -203,5 +203,6 @@ async def on_ready():
 # ================= RUN =================
 
 bot.run(TOKEN)
+
 
 
