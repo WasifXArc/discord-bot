@@ -18,7 +18,7 @@ PK_TZ = datetime.timezone(datetime.timedelta(hours=5))
 
 # Program start date - calculated so Dec 31, 2025 is Day 7 (first rest day)
 # Dec 31 is Day 7, so Day 1 was Dec 25, 2025
-PROGRAM_START = datetime.date(2025, 12, 25)
+PROGRAM_START = datetime.date(2026, 2, 2)
 
 REST_HOUR = 16  # 4 PM
 REST_MINUTE = 0
@@ -27,67 +27,38 @@ WORKOUT_HOURS = [16, 21]  # 4 PM and 10 PM
 WORKOUT_MINUTE = 38
 
 MESSAGES = [
-    "Get today’s workout in.",
-    "Just move today.",
-    "Show up for today’s session.",
-    "Train today. Nothing extra.",
-    "Do the work scheduled for today.",
-    "Today = movement.",
-    "One workout. That’s enough.",
-    "No pressure. Just train.",
-    "Do today’s workout and move on.",
-    "Do what you planned today.",
-    "Move your body today.",
-    "Today is for training.",
-    "Just complete the session.",
-    "Do the minimum, but do it.",
-    "Train, then continue your day.",
-    "Get the session done today.",
-    "No excuses. Just movement.",
-    "Keep the habit alive today.",
-    "Stay consistent today.",
-    "One session keeps momentum.",
-    "Progress comes from today.",
-    "Your future self expects today’s work.",
-    "No thinking. Just train.",
-    "Do today’s work quietly.",
-    "Show up even if it’s light.",
-    "Today’s effort counts.",
-    "Consistency over intensity.",
-    "Do today’s movement.",
-    "Train and log it.",
-    "Make today count.",
-    "Just start the workout.",
-    "Finish today’s session.",
-    "Small effort today.",
-    "Movement first. Everything else later.",
-    "Do the work you promised.",
-    "Complete today’s task.",
-    "Discipline shows up today.",
-    "No need to overdo it.",
-    "Just don’t skip today.",
-    "One step forward today.",
-    "Keep moving forward.",
-    "Your routine needs today.",
-    "Stay on track today.",
-    "Train without drama.",
-    "Do today’s reps.",
-    "Keep it simple today.",
-    "Put the work in today.",
-    "Just be consistent.",
-    "Do the basics today.",
-    "Progress is built today.",
-    "Show discipline today.",
-    "Train and move on.",
-    "No motivation needed today.",
-    "Today is about action.",
-    "Do the session.",
-    "Honor today’s plan.",
-    "Complete the workout.",
-    "Move. That’s enough.",
-    "Stay committed today.",
+    "You can do it again. Start today.",
+    "Season 2 starts now. Don’t slack.",
+    "Missed yesterday? Fix it today.",
+    "Pull yourself together and train.",
+    "One session. No excuses.",
+    "Messed up before? Doesn’t matter. Move.",
+    "Today = redemption. Don’t skip.",
+    "Hit the reps. Prove you can.",
+    "Start again. Small steps, big results.",
+    "Accountability’s calling. Answer it.",
+    "You’ve got another shot. Take it.",
+    "Show up. Season 2 ain’t waiting.",
+    "No thinking. Just hit it.",
+    "Your routine wants you back.",
+    "Today, fight your past laziness.",
+    "Don’t overthink. Just train.",
     "Keep the chain unbroken.",
+    "One workout = one win. Repeat.",
+    "Stop scrolling. Start moving.",
+    "Progress isn’t optional today.",
+    "Don’t let yesterday win. Train.",
+    "Season 2: no mercy, no excuses.",
+    "Move first. Everything else later.",
+    "You’re back. Don’t fumble again.",
+    "Make today count. No shortcuts.",
+    "Keep the streak alive. Start now.",
+    "Your future self is watching. Don’t fail.",
+    "Discipline > Motivation. Do it.",
+    "One session keeps momentum. Keep grinding.",
+    "Show up. Log it. Flex later.",
 ]
+
 
 REST_MESSAGES = [
     "Rest today. You've earned it.",
@@ -203,6 +174,7 @@ async def on_ready():
 # ================= RUN =================
 
 bot.run(TOKEN)
+
 
 
 
